@@ -68,24 +68,23 @@
       </a-entity>
     </a-scene>
 
-   <script>
+ <script>
   const startButton = document.getElementById("startButton");
   const sceneEl = document.querySelector("a-scene");
-  const videoEl = document.querySelector("#my-video");
 
-  startButton.addEventListener("click", async () => {
-    try {
-      // Wait for MindAR to fully initialize before starting
-      await sceneEl.components["mindar-image"].start();
+  sceneEl.addEventListener("loaded", () => {
+    const mindarComponent = sceneEl.components["mindar-image"];
+    const videoEl = document.querySelector("#my-video");
 
-      // Required for iOS autoplay policies
-      videoEl.play().catch(e => {
-        console.warn("Video play failed:", e);
-      });
-
-      startButton.style.display = "none";
-    } catch (e) {
-      console.error("Failed to start AR scene:", e);
-    }
+    startButton.addEventListener("click", async () => {
+      try {
+        await mindarComponent.start(); // Start MindAR
+        await videoEl.play(); // Play video
+        startButton.style.display = "none";
+      } catch (err) {
+        console.error("AR start failed:", err);
+        alert("Camera access is required to view this AR experience.");
+      }
+    });
   });
 </script>
