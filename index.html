@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ByteBrush AR Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- MindAR + A-Frame libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.1.4/dist/mindar-image-aframe.prod.js"></script>
+
+    <style>
+      body, html {
+        margin: 0;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+      }
+      #startButton {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        background: black;
+        color: white;
+        padding: 16px 24px;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Start button for iOS compatibility -->
+    <button id="startButton">Start AR</button>
+
+    <a-scene
+      mindar-image="imageTargetSrc: ./targets/target.mind; autoStart: false;"
+      embedded
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights: true"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: true"
+    >
+      <a-assets>
+        <video
+          id="my-video"
+          src="./videos/sample.webm"
+          loop
+          crossorigin="anonymous"
+          webkit-playsinline
+          playsinline
+        ></video>
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-video
+          src="#my-video"
+          width="1"
+          height="0.5625"
+          position="0 0 0"
+          rotation="0 0 0"
+        ></a-video>
+      </a-entity>
+    </a-scene>
+
+    <script>
+      const startButton = document.getElementById("startButton");
+      const sceneEl = document.querySelector("a-scene");
+
+      startButton.addEventListener("click", () => {
+        sceneEl.components["mindar-image"].start();
+        document.querySelector("#my-video").play();
+        startButton.style.display = "none";
+      });
+    </script>
+  </body>
+</html>
